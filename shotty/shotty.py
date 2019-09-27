@@ -1,4 +1,5 @@
 import boto3
+import botocore  #enabes try and excpet
 #import sys  # in order to read in parameters
 import click
 
@@ -134,8 +135,11 @@ def stop_instances(project):
 
     for i in instances:
         print ("stopping {0}...".format(i.id))
-        i.stop()
-   
+        try:
+            i.stop()
+        except botocore.exceptions.ClientError as e:
+            print("Could not start {0}. ".format(i.id) + str(e))
+            continue
     return    
 
 
@@ -149,7 +153,12 @@ def stop_instances(project):
 
     for i in instances:
         print ("starting {0}...".format(i.id))
-        i.start()
+        
+        try:
+            i.start()
+        except botocore.exceptions.ClientError as e:
+            print("Could not start {0}. ".format(i.id) + str(e))
+            continue
    
     return    
 
